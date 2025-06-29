@@ -45,15 +45,15 @@ Billions are allocated to government schemes, but:
 ---
 
 ## 🔐 Updates
-dated:28-06-2025
-Frontend template upgrades, landing page now fetches real project data from backend 
-error connecting carousel with backend,
- dated: 29-06-2025
- 
-  All interactions are visible on-chain via public explorer.                                   
-  D:\thekey\contracts>npx hardhat run scripts/deploy.ts --network amoy
-  ✅ ProjectLogger deployed to: 0xE474A6F728F8eE2D22a686eC52135d21b7AD99Bd
- (1/3)The application can now mint Project through admin panel. ProjectId, hash and timestamp is stored on chain, rest of all the metadata is stored on supabase table, metamask wallet integrated (navbar+footer)
+
+>dated:28-06-2025
+      -Frontend template upgrades, landing page now fetches real project data from backend 
+      -error connecting carousel with backend,
+> dated: 29-06-2025
+      - All interactions are visible on-chain via public explorer.                                   
+      -D:\thekey\contracts>npx hardhat run scripts/deploy.ts --network amoy
+      -✅ ProjectLogger deployed to: 0xE474A6F728F8eE2D22a686eC52135d21b7AD99Bd
+      - (1/3)The application can now mint Project through admin panel. ProjectId, hash and timestamp is stored on chain, rest of all the metadata is stored on supabase table, metamask wallet integrated (navbar+footer)
 ---
 
 
