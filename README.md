@@ -46,7 +46,9 @@ Billions are allocated to government schemes, but:
 
 ## 🔐 Blockchain Logic
 
-All interactions are visible on-chain via public explorer.
+All interactions are visible on-chain via public explorer.                                    dated: 29-06-2025
+D:\thekey\contracts>npx hardhat run scripts/deploy.ts --network amoy
+✅ ProjectLogger deployed to: 0xE474A6F728F8eE2D22a686eC52135d21b7AD99Bd
 
 ---
 
