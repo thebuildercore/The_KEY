@@ -56,6 +56,20 @@ Billions are allocated to government schemes, but:
       -D:\thekey\contracts>npx hardhat run scripts/deploy.ts --network amoy
       -✅ ProjectLogger deployed to: 0xE474A6F728F8eE2D22a686eC52135d21b7AD99Bd
       - (1/3)The application can now mint Project through admin panel. ProjectId, hash and timestamp is stored on chain, rest of all the metadata is stored on supabase table, metamask wallet integrated (navbar+footer)
+> dated: 01-07-2025
+
+      -Four more screens added for officials, project updates, verify updates, submit report
+      -three out of five functions of contract integrated: logUpdates, add new official
+      -supabase integrated in three screens
+> dated: 02-07-2025
+
+      -Citizens report flow, update project status having error, and few  more integration
+      -Settings screen with no backend integration
+      -Finalized the flow of the app, demo clips ready with 1/3 of backend integration under process
+> dated 03-07-2025
+
+      -Build finalized, complete codes to be uploaded on git after 17th of July.
+      -
 ---
 
 
