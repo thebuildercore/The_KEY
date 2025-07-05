@@ -69,7 +69,12 @@ Billions are allocated to government schemes, but:
 > dated 03-07-2025
 
       -Build finalized, complete codes to be uploaded on git after 17th of July.
-      -
+> dated 05-07-2025 (Updates from 03-07-2025)
+
+      -Verify updates function integrated with contract and supabase.
+      - system logs, Manage officials, Projects.. Admin section all clear.
+      - Dashboard and citizens reports has mock data.
+      - And one issue integrating contract function logUpdate with frontend.
 ---
 
 
