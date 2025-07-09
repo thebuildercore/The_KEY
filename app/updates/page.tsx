@@ -19,6 +19,7 @@ import {
   User,
   TrendingUp,
 } from "lucide-react"
+import { CitizenReportForm } from "@/components/citizen-report-form"
 
 const updates = [
   {
@@ -100,6 +101,8 @@ export default function UpdatesPage() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
   const [activeTab, setActiveTab] = useState("all")
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedUpdateId, setSelectedUpdateId] = useState<number | null>(null)
 
   const filteredUpdates = updates.filter((update) => {
     const matchesSearch =
@@ -111,6 +114,7 @@ export default function UpdatesPage() {
 
     return matchesSearch && matchesStatus && matchesType && matchesTab
   })
+const selectedUpdate = updates.find((u) => u.id === selectedUpdateId)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -139,6 +143,15 @@ export default function UpdatesPage() {
         return <Clock className="w-4 h-4" />
     }
   }
+//updated by copilot
+  function handleCitizenRReport(id: number): void {
+    // For now, just show an alert. In a real app, this could open a modal or navigate to a report form.
+    const update = updates.find((u) => u.id === id)
+    alert(
+      `Citizen report for update:\n\nProject: ${update?.projectName}\nType: ${update?.updateType}\nDescription: ${update?.description}`
+    )
+  }
+ 
 
   return (
     <div className="p-6 space-y-6">
@@ -284,22 +297,40 @@ export default function UpdatesPage() {
                     </div>
                   </div>
                 )}
-
                 {update.status === "pending" && (
                   <div className="flex gap-2 pt-4 border-t">
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    {/* <Button size="sm" className="bg-green-600 hover:bg-green-700">
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Verify Update
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Request More Info
+                    </Button> */}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="mt-2 text-gray-600 border-blue-600 hover:bg-blue-50"
+                      onClick={() => {
+                        setIsModalOpen(true)
+                        setSelectedUpdateId(update.id)
+                      }}
+                    >
+                      Citizen report
                     </Button>
                   </div>
                 )}
               </CardContent>
             </Card>
           ))}
+        
         </TabsContent>
+        {/* to connect to a defined modal page */}
+       {selectedUpdate && (
+  <CitizenReportForm
+    open={isModalOpen}
+    onOpenChange={setIsModalOpen}
+    projectName={selectedUpdate.projectName}
+    updateDescription={selectedUpdate.description}
+  />
+       )}
+
       </Tabs>
 
       {filteredUpdates.length === 0 && (
