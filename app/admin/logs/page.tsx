@@ -1,81 +1,24 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabaseClient"
+import {
+  Search, Filter, Activity, AlertTriangle, CheckCircle, Clock, Download, RefreshCw, ExternalLink,
+} from "lucide-react"
+import {
+  Card, CardContent, CardHeader, CardTitle,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-  Search,
-  Filter,
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Download,
-  RefreshCw,
-  ExternalLink,
-} from "lucide-react"
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
+import {
+  Tabs, TabsContent, TabsList, TabsTrigger,
+} from "@/components/ui/tabs"
 
-const systemLogs = [
-  {
-    id: 1,
-    timestamp: "2024-01-22 14:30:25",
-    level: "info",
-    category: "blockchain",
-    action: "Project Created",
-    details: "New project 'Smart City Phase 2' minted to blockchain",
-    user: "0x1234...ABCD",
-    txHash: "0xa3f...9c1",
-    gasUsed: "0.025 ETH",
-  },
-  {
-    id: 2,
-    timestamp: "2024-01-22 14:25:10",
-    level: "warning",
-    category: "system",
-    action: "High Memory Usage",
-    details: "System memory usage exceeded 85% threshold",
-    user: "system",
-    txHash: null,
-    gasUsed: null,
-  },
-  {
-    id: 3,
-    timestamp: "2024-01-22 14:20:15",
-    level: "error",
-    category: "blockchain",
-    action: "Transaction Failed",
-    details: "Failed to verify project update due to insufficient gas",
-    user: "0x5678...EFGH",
-    txHash: "0xb7d...2e4",
-    gasUsed: "0.001 ETH",
-  },
-  {
-    id: 4,
-    timestamp: "2024-01-22 14:15:30",
-    level: "info",
-    category: "auth",
-    action: "User Login",
-    details: "Administrator logged in successfully",
-    user: "0x9ABC...IJKL",
-    txHash: null,
-    gasUsed: null,
-  },
-  {
-    id: 5,
-    timestamp: "2024-01-22 14:10:45",
-    level: "info",
-    category: "blockchain",
-    action: "Payment Released",
-    details: "Payment of ₹45 Cr released to contractor",
-    user: "0xDEF0...MNOP",
-    txHash: "0xc8e...5f7",
-    gasUsed: "0.018 ETH",
-  },
-]
+// import { logEvent } from "@/lib/logEvent" // Example usage
 
 const auditLogs = [
   {
@@ -109,7 +52,6 @@ const auditLogs = [
     notes: "Issue was minor and has been addressed",
   },
 ]
-
 const stats = [
   { title: "Total Logs", value: "15,247", change: "+234 today", color: "text-blue-600" },
   { title: "Errors", value: "23", change: "+2 today", color: "text-red-600" },
@@ -118,15 +60,60 @@ const stats = [
 ]
 
 export default function SystemLogsPage() {
+  const [systemLogs, setSystemLogs] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [levelFilter, setLevelFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [activeTab, setActiveTab] = useState("system")
 
+  useEffect(() => {
+    const fetchSystemLogs = async () => {
+      const { data, error } = await supabase
+        .from("system_logs")
+        .select("*")
+        .order("timestamp", { ascending: false })
+      if (error) {
+        console.error("Error fetching system logs:", error)
+        setSystemLogs([])
+      } else {
+        setSystemLogs(data || [])
+      }
+    }
+    fetchSystemLogs()
+  }, [])
+
+  // Dynamic stats
+  const stats = [
+    {
+      title: "Total Logs",
+      value: systemLogs.length,
+      change: "+0 today",
+      color: "text-blue-600",
+    },
+    {
+      title: "Errors",
+      value: systemLogs.filter(log => log.level === "error").length,
+      change: "+0 today",
+      color: "text-red-600",
+    },
+    {
+      title: "Warnings",
+      value: systemLogs.filter(log => log.level === "warning").length,
+      change: "+0 today",
+      color: "text-yellow-600",
+    },
+    {
+      title: "Blockchain Txns",
+      value: systemLogs.filter(log => log.category === "blockchain").length,
+      change: "+0 today",
+      color: "text-green-600",
+    },
+  ]
+
   const filteredSystemLogs = systemLogs.filter((log) => {
     const matchesSearch =
-      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.details.toLowerCase().includes(searchTerm.toLowerCase())
+      (log.action?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (log.details?.toLowerCase() || "").includes(searchTerm.toLowerCase())
     const matchesLevel = levelFilter === "all" || log.level === levelFilter
     const matchesCategory = categoryFilter === "all" || log.category === categoryFilter
 
@@ -261,7 +248,13 @@ export default function SystemLogsPage() {
                 <SelectItem value="api">API</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline">Reset Filters</Button>
+            <Button variant="outline" onClick={() => {
+              setSearchTerm("")
+              setLevelFilter("all")
+              setCategoryFilter("all")
+            }}>
+              Reset Filters
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -295,19 +288,19 @@ export default function SystemLogsPage() {
                         <span className="text-gray-500">User:</span>
                         <div className="font-mono">{log.user}</div>
                       </div>
-                      {log.txHash && (
+                      {log.tx_hash && (
                         <div>
                           <span className="text-gray-500">Transaction:</span>
                           <Button variant="link" size="sm" className="p-0 h-auto text-sm">
-                            {log.txHash}
+                            {log.tx_hash}
                             <ExternalLink className="w-3 h-3 ml-1" />
                           </Button>
                         </div>
                       )}
-                      {log.gasUsed && (
+                      {log.gas_used && (
                         <div>
                           <span className="text-gray-500">Gas Used:</span>
-                          <div className="font-semibold text-green-600">{log.gasUsed}</div>
+                          <div className="font-semibold text-green-600">{log.gas_used}</div>
                         </div>
                       )}
                     </div>
@@ -378,4 +371,3 @@ export default function SystemLogsPage() {
     </div>
   )
 }
-
