@@ -75,11 +75,18 @@ Billions are allocated to government schemes, but:
       - system logs, Manage officials, Projects.. Admin section all clear.
       - Dashboard and citizens reports has mock data.
       - And one issue integrating contract function logUpdate with frontend.
+>dated 07-07-2025
+
+       - Citizen report it live with everything integrated.
+       - All features working, contracts integrated, backend almost done.
+       - Three pages including settings dashboard and project updates fetch mock data... unless database has enough rows.
+       - Ready to be reviewed.
 ---
 
 
 ## 🧪 Demo
-(soon)
+https://youtu.be/fXxhq8IvnQs?si=0rygTN_2gSiQZmNA   Previous version
+Current and final version soon.
 
 ## 📌 Features
 
