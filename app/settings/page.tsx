@@ -2,461 +2,429 @@
 
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import {
-  Search,
-  Filter,
-  MessageSquare,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Eye,
-  MapPin,
-  Calendar,
-  User,
-  Camera,
-  FileText,
-} from "lucide-react"
-import Image from "next/image"
+import { Separator } from "@/components/ui/separator"
+import { User, Bell, Shield, Wallet, Database, Save, RefreshCw } from "lucide-react"
 
-const reports = [
-  {
-    id: 1,
-    projectName: "Smart City Development Phase 2",
-    milestone: "Phase 1 Infrastructure Setup",
-    reportType: "Quality Issue",
-    description: "Poor quality of road surface observed. Multiple potholes appeared within 2 weeks of completion.",
-    reportedBy: "Anonymous Citizen",
-    reportedAt: "2024-01-22 09:30",
-    location: "Sector 15, Mumbai",
-    status: "under_investigation",
-    priority: "high",
-    images: ["/placeholder.svg?height=200&width=300"],
-    assignedTo: "Municipal Engineer",
-    category: "Infrastructure",
-  },
-  {
-    id: 2,
-    projectName: "Rural Road Connectivity",
-    milestone: "Road Construction Phase 1",
-    reportType: "Progress Verification",
-    description:
-      "Citizen confirms that the road construction is progressing as per schedule and quality standards are being maintained.",
-    reportedBy: "Rajesh Kumar",
-    reportedAt: "2024-01-21 14:15",
-    location: "Village Khairpur, Rajasthan",
-    status: "resolved",
-    priority: "low",
-    images: [],
-    assignedTo: "Project Manager",
-    category: "Road",
-  },
-  {
-    id: 3,
-    projectName: "Digital Education Initiative",
-    milestone: "Tablet Distribution",
-    reportType: "Delivery Issue",
-    description: "Tablets not received by students in remote areas. Distribution seems incomplete.",
-    reportedBy: "Priya Sharma",
-    reportedAt: "2024-01-20 11:45",
-    location: "Wayanad District, Kerala",
-    status: "in_progress",
-    priority: "medium",
-    images: ["/placeholder.svg?height=200&width=300"],
-    assignedTo: "District Coordinator",
-    category: "Education",
-  },
-  {
-    id: 4,
-    projectName: "Metro Rail Extension",
-    milestone: "Station Construction",
-    reportType: "Safety Concern",
-    description: "Construction site lacks proper safety barriers. Risk to pedestrians and vehicles.",
-    reportedBy: "Amit Patel",
-    reportedAt: "2024-01-19 16:20",
-    location: "Connaught Place, Delhi",
-    status: "acknowledged",
-    priority: "high",
-    images: ["/placeholder.svg?height=200&width=300", "/placeholder.svg?height=200&width=300"],
-    assignedTo: "Safety Inspector",
-    category: "Transport",
-  },
-  {
-    id: 5,
-    projectName: "Hospital Modernization",
-    milestone: "Equipment Installation",
-    reportType: "Positive Feedback",
-    description: "New medical equipment is working excellently. Staff training was comprehensive and effective.",
-    reportedBy: "Dr. Sunita Rao",
-    reportedAt: "2024-01-18 08:30",
-    location: "Government Hospital, Chennai",
-    status: "closed",
-    priority: "low",
-    images: [],
-    assignedTo: "Hospital Administrator",
-    category: "Healthcare",
-  },
-]
-
-const stats = [
-  { title: "Total Reports", value: "1,456", change: "+23 this week", color: "text-blue-600" },
-  { title: "Under Investigation", value: "45", change: "+5 this week", color: "text-yellow-600" },
-  { title: "Resolved", value: "1,398", change: "+18 this week", color: "text-green-600" },
-  { title: "High Priority", value: "13", change: "-2 this week", color: "text-red-600" },
-]
-
-export default function ReportsPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [priorityFilter, setPriorityFilter] = useState("all")
-  const [activeTab, setActiveTab] = useState("all")
-  const [selectedReport, setSelectedReport] = useState<(typeof reports)[0] | null>(null)
-  const [detailsOpen, setDetailsOpen] = useState(false)
-
-  const filteredReports = reports.filter((report) => {
-    const matchesSearch =
-      report.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.reportedBy.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || report.status === statusFilter
-    const matchesPriority = priorityFilter === "all" || report.priority === priorityFilter
-    const matchesTab = activeTab === "all" || report.status === activeTab
-
-    return matchesSearch && matchesStatus && matchesPriority && matchesTab
+export default function SettingsPage() {
+  const [notifications, setNotifications] = useState({
+    projectUpdates: true,
+    citizenReports: true,
+    paymentAlerts: false,
+    systemMaintenance: true,
   })
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "resolved":
-      case "closed":
-        return "bg-green-100 text-green-800"
-      case "in_progress":
-        return "bg-blue-100 text-blue-800"
-      case "under_investigation":
-        return "bg-yellow-100 text-yellow-800"
-      case "acknowledged":
-        return "bg-purple-100 text-purple-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800"
-      case "medium":
-        return "bg-yellow-100 text-yellow-800"
-      case "low":
-        return "bg-green-100 text-green-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "resolved":
-      case "closed":
-        return <CheckCircle className="w-4 h-4" />
-      case "in_progress":
-        return <Clock className="w-4 h-4" />
-      case "under_investigation":
-        return <AlertTriangle className="w-4 h-4" />
-      default:
-        return <MessageSquare className="w-4 h-4" />
-    }
-  }
-
-  const openDetails = (report: (typeof reports)[0]) => {
-    setSelectedReport(report)
-    setDetailsOpen(true)
-  }
+  const [profile, setProfile] = useState({
+    name: "Government Administrator",
+    email: "admin@thekey.gov.in",
+    role: "Super Admin",
+    department: "Digital Governance",
+  })
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Citizen Reports</h1>
-          <p className="text-gray-600 mt-1">Off-chain citizen feedback and reports on project milestones</p>
+          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+          <p className="text-gray-600 mt-1">Manage your account preferences and system configuration</p>
         </div>
         <Button className="bg-blue-600 hover:bg-blue-700">
-          <FileText className="w-4 h-4 mr-2" />
-          Export Reports
+          <Save className="w-4 h-4 mr-2" />
+          Save All Changes
         </Button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                  <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-                  <p className="text-xs text-gray-500 mt-1">{stat.change}</p>
+      <Tabs defaultValue="profile" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="blockchain">Blockchain</TabsTrigger>
+          <TabsTrigger value="system">System</TabsTrigger>
+        </TabsList>
+
+        {/* Profile Settings */}
+        <TabsContent value="profile">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5" />
+                Profile Information
+              </CardTitle>
+              <CardDescription>Update your personal information and account details</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    value={profile.name}
+                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                  />
                 </div>
-                <MessageSquare className={`w-8 h-8 ${stat.color}`} />
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={profile.email}
+                    onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role">Role</Label>
+                  <Select value={profile.role} onValueChange={(value) => setProfile({ ...profile, role: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Super Admin">Super Admin</SelectItem>
+                      <SelectItem value="Project Manager">Project Manager</SelectItem>
+                      <SelectItem value="Financial Officer">Financial Officer</SelectItem>
+                      <SelectItem value="Auditor">Auditor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="department">Department</Label>
+                  <Input
+                    id="department"
+                    value={profile.department}
+                    onChange={(e) => setProfile({ ...profile, department: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Language & Region</h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>Preferred Language</Label>
+                    <Select defaultValue="english">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="english">English</SelectItem>
+                        <SelectItem value="hindi">हिंदी (Hindi)</SelectItem>
+                        <SelectItem value="bengali">বাংলা (Bengali)</SelectItem>
+                        <SelectItem value="tamil">தமிழ் (Tamil)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Time Zone</Label>
+                    <Select defaultValue="ist">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ist">IST (UTC+05:30)</SelectItem>
+                        <SelectItem value="utc">UTC (UTC+00:00)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
-        ))}
-      </div>
+        </TabsContent>
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="w-5 h-5" />
-            Filter Reports
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search reports..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="under_investigation">Under Investigation</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
-                <SelectItem value="acknowledged">Acknowledged</SelectItem>
-                <SelectItem value="resolved">Resolved</SelectItem>
-                <SelectItem value="closed">Closed</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Priority</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline">Reset Filters</Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="all">All Reports</TabsTrigger>
-          <TabsTrigger value="under_investigation">Investigating</TabsTrigger>
-          <TabsTrigger value="in_progress">In Progress</TabsTrigger>
-          <TabsTrigger value="resolved">Resolved</TabsTrigger>
-          <TabsTrigger value="closed">Closed</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value={activeTab} className="space-y-4 mt-6">
-          {filteredReports.map((report) => (
-            <Card key={report.id} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg">{report.projectName}</CardTitle>
-                    <CardDescription className="mt-1">
-                      Milestone: {report.milestone} • Type: {report.reportType}
-                    </CardDescription>
+        {/* Notification Settings */}
+        <TabsContent value="notifications">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bell className="w-5 h-5" />
+                Notification Preferences
+              </CardTitle>
+              <CardDescription>Configure how and when you receive notifications</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Project Updates</Label>
+                    <p className="text-sm text-gray-500">Get notified when projects are updated</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={getPriorityColor(report.priority)}>{report.priority.toUpperCase()}</Badge>
-                    <Badge className={getStatusColor(report.status)}>
-                      {getStatusIcon(report.status)}
-                      <span className="ml-1 capitalize">{report.status.replace("_", " ")}</span>
-                    </Badge>
+                  <Switch
+                    checked={notifications.projectUpdates}
+                    onCheckedChange={(checked) => setNotifications({ ...notifications, projectUpdates: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Citizen Reports</Label>
+                    <p className="text-sm text-gray-500">Receive alerts for new citizen feedback</p>
+                  </div>
+                  <Switch
+                    checked={notifications.citizenReports}
+                    onCheckedChange={(checked) => setNotifications({ ...notifications, citizenReports: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Payment Alerts</Label>
+                    <p className="text-sm text-gray-500">Get notified about payment transactions</p>
+                  </div>
+                  <Switch
+                    checked={notifications.paymentAlerts}
+                    onCheckedChange={(checked) => setNotifications({ ...notifications, paymentAlerts: checked })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>System Maintenance</Label>
+                    <p className="text-sm text-gray-500">Important system updates and maintenance</p>
+                  </div>
+                  <Switch
+                    checked={notifications.systemMaintenance}
+                    onCheckedChange={(checked) => setNotifications({ ...notifications, systemMaintenance: checked })}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Notification Methods</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch defaultChecked />
+                    <Label>Email</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch defaultChecked />
+                    <Label>In-App</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch />
+                    <Label>SMS</Label>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-gray-700">{report.description}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-gray-500" />
-                    <div>
-                      <span className="text-gray-500">Reported by:</span>
-                      <div className="font-medium">{report.reportedBy}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-500" />
-                    <div>
-                      <span className="text-gray-500">Date:</span>
-                      <div>{report.reportedAt}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-gray-500" />
-                    <div>
-                      <span className="text-gray-500">Location:</span>
-                      <div>{report.location}</div>
-                    </div>
+        {/* Security Settings */}
+        <TabsContent value="security">
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="w-5 h-5" />
+                  Security Settings
+                </CardTitle>
+                <CardDescription>Manage your account security and access controls</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="current-password">Current Password</Label>
+                    <Input id="current-password" type="password" className="mt-2" />
                   </div>
                   <div>
-                    <span className="text-gray-500">Assigned to:</span>
-                    <div className="font-medium">{report.assignedTo}</div>
+                    <Label htmlFor="new-password">New Password</Label>
+                    <Input id="new-password" type="password" className="mt-2" />
+                  </div>
+                  <div>
+                    <Label htmlFor="confirm-password">Confirm New Password</Label>
+                    <Input id="confirm-password" type="password" className="mt-2" />
+                  </div>
+                  <Button>Update Password</Button>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Two-Factor Authentication</h3>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Enable 2FA</p>
+                      <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                    </div>
+                    <Switch />
                   </div>
                 </div>
 
-                {report.images.length > 0 && (
-                  <div className="flex items-center gap-2 text-sm text-blue-600">
-                    <Camera className="w-4 h-4" />
-                    <span>{report.images.length} image(s) attached</span>
-                  </div>
-                )}
+                <Separator />
 
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <div className="text-sm text-gray-500">Category: {report.category}</div>
-                  <Button variant="outline" size="sm" onClick={() => openDetails(report)}>
-                    <Eye className="w-4 h-4 mr-2" />
-                    View Details
-                  </Button>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">API Access</h3>
+                  <div className="space-y-2">
+                    <Label>API Key</Label>
+                    <div className="flex gap-2">
+                      <Input value="sk_live_..." readOnly className="font-mono" />
+                      <Button variant="outline">
+                        <RefreshCw className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
-          ))}
+          </div>
+        </TabsContent>
+
+        {/* Blockchain Settings */}
+        <TabsContent value="blockchain">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="w-5 h-5" />
+                Blockchain Configuration
+              </CardTitle>
+              <CardDescription>Configure blockchain network and wallet settings</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Blockchain Network</Label>
+                  <Select defaultValue="ethereum">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ethereum">Ethereum Mainnet</SelectItem>
+                      <SelectItem value="polygon">Polygon</SelectItem>
+                      <SelectItem value="bsc">Binance Smart Chain</SelectItem>
+                      <SelectItem value="testnet">Ethereum Testnet</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Connected Wallet</Label>
+                  <div className="flex items-center gap-2 p-3 border rounded-lg">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="font-mono">0xABCD...1234</span>
+                    <Button variant="outline" size="sm" className="ml-auto bg-transparent">
+                      Disconnect
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Gas Price Settings</Label>
+                  <Select defaultValue="standard">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="slow">Slow (Lower fees)</SelectItem>
+                      <SelectItem value="standard">Standard</SelectItem>
+                      <SelectItem value="fast">Fast (Higher fees)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Smart Contract Settings</h3>
+                <div className="space-y-2">
+                  <Label>Project Registry Contract</Label>
+                  <Input value="0x742d35Cc6634C0532925a3b8D4C9db..." readOnly className="font-mono" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Payment Contract</Label>
+                  <Input value="0x8ba1f109551bD432803012645Hac..." readOnly className="font-mono" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* System Settings */}
+        <TabsContent value="system">
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Database className="w-5 h-5" />
+                  System Configuration
+                </CardTitle>
+                <CardDescription>Advanced system settings and maintenance options</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Maintenance Mode</p>
+                      <p className="text-sm text-gray-500">Enable maintenance mode for system updates</p>
+                    </div>
+                    <Switch />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Debug Logging</p>
+                      <p className="text-sm text-gray-500">Enable detailed system logging</p>
+                    </div>
+                    <Switch />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Auto Backup</p>
+                      <p className="text-sm text-gray-500">Automatically backup system data</p>
+                    </div>
+                    <Switch defaultChecked />
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Data Management</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button variant="outline">
+                      <Database className="w-4 h-4 mr-2" />
+                      Export Data
+                    </Button>
+                    <Button variant="outline">
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Clear Cache
+                    </Button>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">System Information</h3>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-500">Version:</span>
+                      <div className="font-medium">The Key v2.1.0</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Last Updated:</span>
+                      <div className="font-medium">2024-01-22</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Database Size:</span>
+                      <div className="font-medium">2.4 GB</div>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Active Users:</span>
+                      <div className="font-medium">1,247</div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
-
-      {/* Report Details Dialog */}
-      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Report Details</DialogTitle>
-            <DialogDescription>Detailed view of citizen report and investigation status</DialogDescription>
-          </DialogHeader>
-          {selectedReport && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h3 className="font-semibold text-lg">{selectedReport.projectName}</h3>
-                  <p className="text-gray-600">{selectedReport.milestone}</p>
-                </div>
-                <div className="text-right">
-                  <Badge className={getStatusColor(selectedReport.status)} className="mb-2">
-                    {getStatusIcon(selectedReport.status)}
-                    <span className="ml-1 capitalize">{selectedReport.status.replace("_", " ")}</span>
-                  </Badge>
-                  <br />
-                  <Badge className={getPriorityColor(selectedReport.priority)}>
-                    {selectedReport.priority.toUpperCase()} PRIORITY
-                  </Badge>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-2">Report Description</h4>
-                <p className="text-gray-700 bg-gray-50 p-4 rounded-lg">{selectedReport.description}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-2">Report Information</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Reported by:</span>
-                      <span>{selectedReport.reportedBy}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Date & Time:</span>
-                      <span>{selectedReport.reportedAt}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Location:</span>
-                      <span>{selectedReport.location}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Type:</span>
-                      <span>{selectedReport.reportType}</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Investigation Details</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Assigned to:</span>
-                      <span>{selectedReport.assignedTo}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Category:</span>
-                      <span>{selectedReport.category}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Priority:</span>
-                      <span className="capitalize">{selectedReport.priority}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {selectedReport.images.length > 0 && (
-                <div>
-                  <h4 className="font-semibold mb-2">Attached Images</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    {selectedReport.images.map((image, index) => (
-                      <Image
-                        key={index}
-                        src={image || "/placeholder.svg"}
-                        alt={`Report evidence ${index + 1}`}
-                        width={300}
-                        height={200}
-                        className="rounded-lg border"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex gap-2 pt-4 border-t">
-                <Button className="bg-blue-600 hover:bg-blue-700">Update Status</Button>
-                <Button variant="outline">Add Comment</Button>
-                <Button variant="outline">Assign to Team</Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {filteredReports.length === 0 && (
-        <Card>
-          <CardContent className="text-center py-12">
-            <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-500 text-lg">No reports found matching your criteria</p>
-            <Button
-              variant="outline"
-              className="mt-4 bg-transparent"
-              onClick={() => {
-                setSearchTerm("")
-                setStatusFilter("all")
-                setPriorityFilter("all")
-              }}
-            >
-              Clear Filters
-            </Button>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }
