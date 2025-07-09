@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -23,92 +23,26 @@ import {
   FileText,
 } from "lucide-react"
 import Image from "next/image"
+import { supabase } from "@/lib/supabaseClient"
 
-const reports = [
-  {
-    id: 1,
-    projectName: "Smart City Development Phase 2",
-    milestone: "Phase 1 Infrastructure Setup",
-    reportType: "Quality Issue",
-    description: "Poor quality of road surface observed. Multiple potholes appeared within 2 weeks of completion.",
-    reportedBy: "Anonymous Citizen",
-    reportedAt: "2024-01-22 09:30",
-    location: "Sector 15, Mumbai",
-    status: "under_investigation",
-    priority: "high",
-    images: ["/placeholder.svg?height=200&width=300"],
-    assignedTo: "Municipal Engineer",
-    category: "Infrastructure",
-  },
-  {
-    id: 2,
-    projectName: "Rural Road Connectivity",
-    milestone: "Road Construction Phase 1",
-    reportType: "Progress Verification",
-    description:
-      "Citizen confirms that the road construction is progressing as per schedule and quality standards are being maintained.",
-    reportedBy: "Rajesh Kumar",
-    reportedAt: "2024-01-21 14:15",
-    location: "Village Khairpur, Rajasthan",
-    status: "resolved",
-    priority: "low",
-    images: [],
-    assignedTo: "Project Manager",
-    category: "Road",
-  },
-  {
-    id: 3,
-    projectName: "Digital Education Initiative",
-    milestone: "Tablet Distribution",
-    reportType: "Delivery Issue",
-    description: "Tablets not received by students in remote areas. Distribution seems incomplete.",
-    reportedBy: "Priya Sharma",
-    reportedAt: "2024-01-20 11:45",
-    location: "Wayanad District, Kerala",
-    status: "in_progress",
-    priority: "medium",
-    images: ["/placeholder.svg?height=200&width=300"],
-    assignedTo: "District Coordinator",
-    category: "Education",
-  },
-  {
-    id: 4,
-    projectName: "Metro Rail Extension",
-    milestone: "Station Construction",
-    reportType: "Safety Concern",
-    description: "Construction site lacks proper safety barriers. Risk to pedestrians and vehicles.",
-    reportedBy: "Amit Patel",
-    reportedAt: "2024-01-19 16:20",
-    location: "Connaught Place, Delhi",
-    status: "acknowledged",
-    priority: "high",
-    images: ["/placeholder.svg?height=200&width=300", "/placeholder.svg?height=200&width=300"],
-    assignedTo: "Safety Inspector",
-    category: "Transport",
-  },
-  {
-    id: 5,
-    projectName: "Hospital Modernization",
-    milestone: "Equipment Installation",
-    reportType: "Positive Feedback",
-    description: "New medical equipment is working excellently. Staff training was comprehensive and effective.",
-    reportedBy: "Dr. Sunita Rao",
-    reportedAt: "2024-01-18 08:30",
-    location: "Government Hospital, Chennai",
-    status: "closed",
-    priority: "low",
-    images: [],
-    assignedTo: "Hospital Administrator",
-    category: "Healthcare",
-  },
-]
+  interface Report {
+  id: string
+  title: string
+  report_type: string
+  description: string
+  reporter_name: string
+  location: string
+  project_name?: string
+  update_description?: string
+  status: string
+  priority: string
+  created_at: string
+  assigned_to?: string
+  category?: string
+  images: string[]
+ 
+}
 
-const stats = [
-  { title: "Total Reports", value: "1,456", change: "+23 this week", color: "text-blue-600" },
-  { title: "Under Investigation", value: "45", change: "+5 this week", color: "text-yellow-600" },
-  { title: "Resolved", value: "1,398", change: "+18 this week", color: "text-green-600" },
-  { title: "High Priority", value: "13", change: "-2 this week", color: "text-red-600" },
-]
 
 export default function ReportsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -117,12 +51,53 @@ export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState("all")
   const [selectedReport, setSelectedReport] = useState<(typeof reports)[0] | null>(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
+const [reports, setReports] = useState<Report[]>([])
+const [stats, setStats] = useState([
+  { title: "Total Reports", value: "1,456", change: "+23 this week", color: "text-blue-600" },
+  { title: "Under Investigation", value: "45", change: "+5 this week", color: "text-yellow-600" },
+  { title: "Resolved", value: "1,398", change: "+18 this week", color: "text-green-600" },
+  { title: "High Priority", value: "13", change: "-2 this week", color: "text-red-600" },
+])
+
+
+
+useEffect (() => {
+  const fetchData = async () => {
+    try {
+      const { data: reportData, error: reportError } = await supabase
+      .from ("reports")
+      .select ("*")
+      .order ("created_at", {ascending: false})
+      if (reportError) {
+       console.error(" Reports error:", reportError);
+      }else {
+        setReports(reportData as Report[])
+
+        const total = reportData.length
+        const under_investigation = reportData.filter(r => r.status === "underInvestigation").length
+        const resolved = reportData.filter(r =>r.status === "resolved").length
+        const high_priority = reportData.filter(r => r.priority ==="high").length
+
+        setStats([
+      { title: "Total REports", value: total.toString(), change:"", color:"text-blue-600"},
+      { title: " Under Investigation ", value: under_investigation.toString(), change:"",color: "text-yellow-600"},
+      {title: "Resolved", value: resolved.toString(), change:"", color:"text-green-600"},
+      {title: "High Priority", value: high_priority.toString(), change:"", color: "text-red-600"},
+   ])
+
+      }
+    }catch (err){
+      console.error("Error Fetching Reports", err);
+    }
+  }
+  fetchData();
+}, [])
 
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
-      report.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.reportedBy.toLowerCase().includes(searchTerm.toLowerCase())
+      report.reporter_name?.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === "all" || report.status === statusFilter
     const matchesPriority = priorityFilter === "all" || report.priority === priorityFilter
     const matchesTab = activeTab === "all" || report.status === activeTab
@@ -273,16 +248,16 @@ export default function ReportsPage() {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-lg">{report.projectName}</CardTitle>
-                    <CardDescription className="mt-1">
-                      Milestone: {report.milestone} • Type: {report.reportType}
-                    </CardDescription>
+                    <CardTitle className="text-lg">{report.title}</CardTitle>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge className={getPriorityColor(report.priority)}>{report.priority.toUpperCase()}</Badge>
+                   <Badge className={getPriorityColor(report.priority)}>
+                      {report.priority ? report.priority.toUpperCase() : "UNKNOWN"}
+                    </Badge>
+
                     <Badge className={getStatusColor(report.status)}>
                       {getStatusIcon(report.status)}
-                      <span className="ml-1 capitalize">{report.status.replace("_", " ")}</span>
+                      <span className="ml-1 capitalize">{(report.status ?? "unknown").replace("_", " ")}</span>
                     </Badge>
                   </div>
                 </div>
@@ -295,14 +270,14 @@ export default function ReportsPage() {
                     <User className="w-4 h-4 text-gray-500" />
                     <div>
                       <span className="text-gray-500">Reported by:</span>
-                      <div className="font-medium">{report.reportedBy}</div>
+                      <div className="font-medium">{report.reporter_name}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-gray-500" />
                     <div>
                       <span className="text-gray-500">Date:</span>
-                      <div>{report.reportedAt}</div>
+                      <div>{report.created_at}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -314,17 +289,16 @@ export default function ReportsPage() {
                   </div>
                   <div>
                     <span className="text-gray-500">Assigned to:</span>
-                    <div className="font-medium">{report.assignedTo}</div>
+                    <div className="font-medium">{report.assigned_to}</div>
                   </div>
                 </div>
 
-                {report.images.length > 0 && (
-                  <div className="flex items-center gap-2 text-sm text-blue-600">
-                    <Camera className="w-4 h-4" />
-                    <span>{report.images.length} image(s) attached</span>
-                  </div>
-                )}
-
+               {report.images?.length > 0 && (
+  <div className="flex items-center gap-2 text-sm text-blue-600">
+    <Camera className="w-4 h-4" />
+    <span>{report.images.length} image(s) attached</span>
+  </div>
+)}
                 <div className="flex items-center justify-between pt-4 border-t">
                   <div className="text-sm text-gray-500">Category: {report.category}</div>
                   <Button variant="outline" size="sm" onClick={() => openDetails(report)}>
@@ -348,14 +322,11 @@ export default function ReportsPage() {
           {selectedReport && (
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h3 className="font-semibold text-lg">{selectedReport.projectName}</h3>
-                  <p className="text-gray-600">{selectedReport.milestone}</p>
-                </div>
+
                 <div className="text-right">
-                  <Badge className={getStatusColor(selectedReport.status)} className="mb-2">
+                  <Badge className={`${getStatusColor(selectedReport.status)} mb-2`}>
                     {getStatusIcon(selectedReport.status)}
-                    <span className="ml-1 capitalize">{selectedReport.status.replace("_", " ")}</span>
+                    <span className="ml-1 capitalize">{(selectedReport.status ?? "unknown").replace("_", " ")}</span>
                   </Badge>
                   <br />
                   <Badge className={getPriorityColor(selectedReport.priority)}>
@@ -375,11 +346,11 @@ export default function ReportsPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Reported by:</span>
-                      <span>{selectedReport.reportedBy}</span>
+                      <span>{selectedReport.reporter_name}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Date & Time:</span>
-                      <span>{selectedReport.reportedAt}</span>
+                      <span>{selectedReport.created_at}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Location:</span>
@@ -387,7 +358,7 @@ export default function ReportsPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Type:</span>
-                      <span>{selectedReport.reportType}</span>
+                      <span>{selectedReport.report_type}</span>
                     </div>
                   </div>
                 </div>
@@ -396,7 +367,7 @@ export default function ReportsPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Assigned to:</span>
-                      <span>{selectedReport.assignedTo}</span>
+                      <span>{selectedReport.assigned_to}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Category:</span>
