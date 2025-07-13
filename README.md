@@ -37,11 +37,11 @@ Billions are allocated to government schemes, but:
 | Layer        | Tech Used                            |
 |--------------|--------------------------------------|
 | Frontend     | React (Next.js), Tailwind CSS           |
-| Backend      | Node.js, Express                     |
+| Backend      | Node.js, Supabase                    |
 | Blockchain   | Solidity Smart Contracts (Polygon)   |
 | Wallet       | MetaMask, Ethers.js                  |
 | Off-chain DB | Supabase (for feedback and reports)  |
-
+contracts abis in /contracts/abi
 ---
 
 ## 🔐 Updates
@@ -113,18 +113,6 @@ Current and final version soon.
 - 🔔 Event logs for every action
 
 ---
-Tech Stack
-Next.js
-
-TypeScript
-
-Tailwind CSS
-
-Supabase
-
-Ethers.js or Web3.js
-
-Smart Contracts (ABI included in /contracts/abi)
 
 ## 🧠 Learnings / Impact
 
