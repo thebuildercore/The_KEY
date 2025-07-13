@@ -3,11 +3,11 @@
 
 A transparent, decentralized system to track, audit, and verify government schemes in real time.
 
-🚀 **Built at: Code for Bharat season 2**  
-👨‍💻 Team: Solo Build by Akshaya Krishna
-Theme: Blockchain and Web3
-Category: Governance & Public Welfare 
-
+## 🚀 Built At
+- **Hackathon**: Code for Bharat Season 2
+- **Team**: Solo build by *Akshaya Krishna*
+- **Category**: Governance & Public Welfare
+- **Theme**: Blockchain & Web3
 ---
 
 ## ❓ Problem
@@ -88,21 +88,30 @@ Follow these steps to run the project locally.
 
 ### 1. Clone the Repo
 
-``bash
-          git clone https://github.com/thebuildercore/The_KEY.git
-          cd The_KEY
-  Install dependencies
-         pnpm install
- *Environment Variables*
-Create a .env file in the root directory of the project.
-Use the provided .env.example file as a guide:
-*Run the server*
-pnpm dev
-then visit: http://localhost:3000
+# 1. Clone the Repo
+git clone https://github.com/thebuildercore/The_KEY.git
+cd The_KEY
 
-## 🧪 Demo
-Previous version: https://youtu.be/fXxhq8IvnQs?si=0rygTN_2gSiQZmNA   
-Current and final version: https://youtu.be/cmqX5FXaEek?si=00TebBwrOjidfpFX
+# 2. Install dependencies
+pnpm install
+
+# 3. Setup Environment
+# Create a `.env` file based on `.env.example`
+
+# 4. Start the Server
+pnpm dev
+# Then visit: http://localhost:3000
+
+> ✅ Smart contracts deployed — [View contract](https://amoy.polygonscan.com/address/0xE474A6F728F8eE2D22a686eC52135d21b7AD99Bd)
+
+---
+
+## 🧪 Demo Links
+
+- 🔴 [Initial Demo (Old Version)](https://youtu.be/fXxhq8IvnQs?si=0rygTN_2gSiQZmNA)  
+- ✅ [Final Demo (Full Features)](https://youtu.be/cmqX5FXaEek?si=00TebBwrOjidfpFX)
+
+---
 
 ## 📌 Features
 
@@ -112,15 +121,6 @@ Current and final version: https://youtu.be/cmqX5FXaEek?si=00TebBwrOjidfpFX
 - 🗣️ Citizen reports (off-chain)
 - 🔔 Event logs for every action
 
----
-
-## 🧠 Learnings / Impact
-
-> "Even if one scheme misuse is caught using this, it justifies the entire project."
-
-- Learned smart contract event logging & wallet tracking
-- Explored linking on-chain programs with off-chain citizen actions
-- Designed for mass scalability across Indian welfare systems
 
 ---
 
