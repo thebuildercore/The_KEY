@@ -102,7 +102,7 @@ then visit: http://localhost:3000
 
 ## 🧪 Demo
 Previous version: https://youtu.be/fXxhq8IvnQs?si=0rygTN_2gSiQZmNA   
-Current and final version: youtu.be/cmqX5FXaEek?si=00TebBwrOjidfpFX
+Current and final version: https://youtu.be/cmqX5FXaEek?si=00TebBwrOjidfpFX
 
 ## 📌 Features
 
