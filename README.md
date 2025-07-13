@@ -83,6 +83,22 @@ Billions are allocated to government schemes, but:
        - Ready to be reviewed.
 ---
 
+Project setup
+Follow these steps to run the project locally.
+
+### 1. Clone the Repo
+
+``bash
+          git clone https://github.com/thebuildercore/The_KEY.git
+          cd The_KEY
+  Install dependencies
+         pnpm install
+ *Environment Variables*
+Create a .env file in the root directory of the project.
+Use the provided .env.example file as a guide:
+*Run the server*
+pnpm dev
+then visit: http://localhost:3000
 
 ## 🧪 Demo
 https://youtu.be/fXxhq8IvnQs?si=0rygTN_2gSiQZmNA   Previous version
@@ -97,6 +113,18 @@ Current and final version soon.
 - 🔔 Event logs for every action
 
 ---
+Tech Stack
+Next.js
+
+TypeScript
+
+Tailwind CSS
+
+Supabase
+
+Ethers.js or Web3.js
+
+Smart Contracts (ABI included in /contracts/abi)
 
 ## 🧠 Learnings / Impact
 
