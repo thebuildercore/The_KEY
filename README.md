@@ -101,8 +101,8 @@ pnpm dev
 then visit: http://localhost:3000
 
 ## 🧪 Demo
-https://youtu.be/fXxhq8IvnQs?si=0rygTN_2gSiQZmNA   Previous version
-Current and final version soon.
+Previous version: https://youtu.be/fXxhq8IvnQs?si=0rygTN_2gSiQZmNA   
+Current and final version: youtu.be/cmqX5FXaEek?si=00TebBwrOjidfpFX
 
 ## 📌 Features
 
