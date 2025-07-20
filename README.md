@@ -45,7 +45,9 @@ Billions are allocated to government schemes, but:
 | Blockchain   | Solidity Smart Contracts (Polygon)   |
 | Wallet       | MetaMask, Ethers.js                  |
 | Off-chain DB | Supabase (for feedback and reports)  |
-contracts abis in /contracts/abi
+|contracts abis in|  /contracts/abi                   |
+| IPFS          | web3.storage                        |
+
 ---
 
 ## 🔐 Updates
