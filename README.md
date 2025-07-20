@@ -31,6 +31,10 @@ Billions are allocated to government schemes, but:
 - Create a **public dashboard** with verified updates.
 
 ---
+## Data storage
+
+- Only the Project Name and respective IPFS cid containing all the metadata of project and project update will be stored on chain to walk through expensive on chain storage.
+- IPFS uploading part is not completed yet.
 
 ## 🧱 Tech Stack
 
